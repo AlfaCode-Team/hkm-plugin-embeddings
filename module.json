@@ -1,0 +1,45 @@
+{
+    "name": "embeddings",
+    "version": "0.1.0",
+    "kernel": "^1.20.0",
+    "solves": "embedding.generation",
+    "type": "module",
+
+    "requires": [],
+
+    "exposes": [
+        "AlfacodeTeam\\PhpServicePlatform\\Kernel\\Ports\\EmbeddingPort"
+    ],
+
+    "routes": [],
+    "emits": [],
+    "listens": [],
+    "files": [],
+
+    "documentation": "EmbeddingPort: text in, vector out, with a cache keyed on a content hash so unchanged text is never embedded twice. Two drivers: `local`, a deterministic feature-hashing embedder with no semantic meaning (for tests and development), and `openai`, an adapter for any OpenAI-compatible /embeddings endpoint, called through HttpClientPort.",
+
+    "//driver-has-no-default-on-purpose": "EMBEDDINGS_DRIVER is required and has no default. A default of `local` would let a production deployment run on vectors that look fine, index fine and search fine while carrying no meaning at all — there is no error anywhere. A default of `openai` would make enabling the plugin a paid-API commitment. Either way the choice has to be made by whoever enables it.",
+
+    "//http-client-is-optional": "The local driver needs no network, so http.client is not in requires[]. A route that uses the openai driver declares \"requires\": [\"embedding.generation\", \"http.client\"]; asking for that driver without the HTTP client throws a message naming exactly that line.",
+
+    "//no-routes": "An embedding endpoint is an open amplifier: every request is a paid provider call that the caller does not pay for. The capability is a port; the application decides who may call it, and how often.",
+
+    "//api-key-has-no-default": "EMBEDDINGS_API_KEY is optional in the manifest because the local driver does not use it, and is checked when the openai driver is first used. It is never printed, never in an exception message, and never part of model().",
+
+    "commands": [
+        "Plugins\\Embeddings\\Infrastructure\\Cli\\EmbeddingsProbeCommand"
+    ],
+
+    "config": [
+        { "key": "EMBEDDINGS_DRIVER", "type": "string", "required": true },
+        { "key": "EMBEDDINGS_MODEL", "type": "string", "required": false },
+        { "key": "EMBEDDINGS_DIMENSIONS", "type": "int", "required": false },
+        { "key": "EMBEDDINGS_API_KEY", "type": "string", "required": false },
+        { "key": "EMBEDDINGS_BASE_URL", "type": "string", "required": false, "default": "https://api.openai.com/v1" },
+        { "key": "EMBEDDINGS_BATCH_SIZE", "type": "int", "required": false, "default": 96 },
+        { "key": "EMBEDDINGS_TIMEOUT", "type": "int", "required": false, "default": 30 },
+        { "key": "EMBEDDINGS_MAX_INPUT_CHARS", "type": "int", "required": false, "default": 24000 },
+        { "key": "EMBEDDINGS_CACHE", "type": "bool", "required": false, "default": true },
+        { "key": "EMBEDDINGS_CACHE_TTL", "type": "int", "required": false, "default": 2592000 }
+    ]
+}

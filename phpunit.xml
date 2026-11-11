@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/13.2/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         failOnWarning="true"
+         failOnRisky="true"
+         cacheDirectory=".phpunit.cache">
+    <testsuites>
+        <!--
+            One suite. Nothing here touches the network: the HTTP adapter is driven through a
+            recording HttpClientPort, so what is verified is the REQUEST SHAPE this plugin
+            sends and how it reads a canned answer — never a live provider.
+        -->
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory suffix=".php">Application</directory>
+            <directory suffix=".php">Infrastructure</directory>
+        </include>
+    </source>
+</phpunit>
